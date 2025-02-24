@@ -46,5 +46,5 @@ This is a Firebase MCP (Model Context Protocol) server that provides a unified i
 - List files in a directory
 - Get File metadata and Download URL
 
-### License
+## License
 - MIT License
