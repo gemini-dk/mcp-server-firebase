@@ -5,6 +5,10 @@ import path from 'path';
 
 export async function list_collections(documentPath?: string, limit: number = 20, pageToken?: string) {
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     let collections;
     if (documentPath) {
       const docRef = db.doc(documentPath);
@@ -57,6 +61,10 @@ function convertTimestampsToISO(data: any) {
 export async function listDocuments(collection: string, filters: Array<{ field: string, operator: FirebaseFirestore.WhereFilterOp, value: any }> = [], limit: number = 20, pageToken?: string) {
   const projectId = getProjectId();
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     const collectionRef = db.collection(collection);
     let filteredQuery: Query = collectionRef;
     for (const filter of filters) {
@@ -110,6 +118,10 @@ export async function listDocuments(collection: string, filters: Array<{ field: 
 
 export async function addDocument(collection: string, data: any) {
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     const docRef = await db.collection(collection).add(data);
     const projectId = getProjectId();
     convertTimestampsToISO(data);
@@ -122,6 +134,10 @@ export async function addDocument(collection: string, data: any) {
 
 export async function getDocument(collection: string, id: string) {
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     const doc = await db.collection(collection).doc(id).get();
     if (!doc.exists) {
       return { content: [{ type: 'text', text: 'Document not found' }], isError: true };
@@ -138,6 +154,10 @@ export async function getDocument(collection: string, id: string) {
 
 export async function updateDocument(collection: string, id: string, data: any) {
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     await db.collection(collection).doc(id).update(data);
     const projectId = getProjectId();
     convertTimestampsToISO(data);
@@ -150,6 +170,10 @@ export async function updateDocument(collection: string, id: string, data: any) 
 
 export async function deleteDocument(collection: string, id: string) {
   try {
+    if (!db) {
+      return { content: [{ type: 'text', text: 'Firebase is not initialized. SERVICE_ACCOUNT_KEY_PATH environment variable is required.' }], isError: true };
+    }
+    
     await db.collection(collection).doc(id).delete();
     return { content: [{ type: 'text', text: 'Document deleted successfully' }] };
   } catch (error) {

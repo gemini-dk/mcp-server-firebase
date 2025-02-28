@@ -1,22 +1,49 @@
 import * as admin from 'firebase-admin';
-
-import path from 'path';
 import fs from 'fs';
 
-const serviceAccountPath = process.env.SERVICE_ACCOUNT_KEY_PATH || path.resolve(process.cwd(), 'serviceAccountKey.json');
-const serviceAccount = require(serviceAccountPath);
+function initializeFirebase() {
+  const serviceAccountPath = process.env.SERVICE_ACCOUNT_KEY_PATH;
+  
+  if (!serviceAccountPath) {
+    console.error('Firebase initialization skipped: SERVICE_ACCOUNT_KEY_PATH is not set');
+    return null;
+  }
 
-function getProjectId(): string {
-  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-  return serviceAccount.project_id;
+  try {
+    const serviceAccount = require(serviceAccountPath);
+    const projectId = getProjectId(serviceAccountPath);
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      storageBucket: `${projectId}.appspot.com`
+    });
+
+    return admin;
+  } catch (error) {
+    console.error('Firebase initialization failed:', error);
+    return null;
+  }
 }
-const projectId = getProjectId();
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: `${projectId}.appspot.com`
-});
+function getProjectId(serviceAccountPath?: string): string {
+  if (!serviceAccountPath) {
+    serviceAccountPath = process.env.SERVICE_ACCOUNT_KEY_PATH;
+    if (!serviceAccountPath) {
+      console.error('Cannot get project ID: SERVICE_ACCOUNT_KEY_PATH is not set');
+      return '';
+    }
+  }
+  
+  try {
+    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+    return serviceAccount.project_id;
+  } catch (error) {
+    console.error('Failed to get project ID:', error);
+    return '';
+  }
+}
 
-const db = admin.firestore();
+const adminApp = initializeFirebase();
+const db = adminApp ? admin.firestore() : null;
 
 export { db, admin, getProjectId };
