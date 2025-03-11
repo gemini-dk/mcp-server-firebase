@@ -1,5 +1,9 @@
 # Firebase MCP Server
 
+<a href="https://glama.ai/mcp/servers/dlr8h5ouc9">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/dlr8h5ouc9/badge" alt="Firebase Server MCP server" />
+</a>
+
 ## Overview
 This is a Firebase MCP (Model Context Protocol) server that provides a unified interface to interact with various Firebase services including Authentication, Firestore, and Storage.
 
